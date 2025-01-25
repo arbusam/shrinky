@@ -188,7 +188,7 @@ export default function Home() {
       <div className="flex flex-col items-center">
         <h1 className="text-center text-4xl font-bold">Shrinky</h1>
         <h2 className="text-center text-xl mt-2 mb-5">
-          Compress and convert your images with ease
+          Compress and convert images with ease
         </h2>
         {!file && (
           <div className="flex w-full items-center justify-center">
