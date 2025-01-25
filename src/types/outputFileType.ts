@@ -1,5 +1,5 @@
 export enum OutputFileType {
-  PNG = 'png',
-  JPEG = 'jpeg',
-  WEBP = 'webp',
+  PNG = "png",
+  JPEG = "jpeg",
+  WEBP = "webp",
 }

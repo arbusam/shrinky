@@ -1,8 +1,15 @@
 "use client";
 
 import { OutputFileType } from "@/types/outputFileType";
-import { Button, Dropdown, FileInput, Label, RangeSlider } from "flowbite-react";
-import { useEffect, useState } from "react";
+import {
+  Button,
+  Dropdown,
+  FileInput,
+  Label,
+  RangeSlider,
+} from "flowbite-react";
+import Image from "next/image";
+import { useState } from "react";
 
 export default function Home() {
   const [file, setFile] = useState<File | null>(null);
@@ -16,61 +23,69 @@ export default function Home() {
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const files = event.target.files;
-    const supportedTypes = ['.svg', '.png', '.jpg', '.jpeg', '.webp'];
+    const supportedTypes = [".svg", ".png", ".jpg", ".jpeg", ".webp"];
     if (files && files.length > 0) {
       if (files[0].size > 10 * 1024 * 1024) {
         alert("File too large, must be less than 10 MB!");
         return;
       }
-      if (supportedTypes.some(type => files[0].name.toLowerCase().endsWith(type))) {
+      if (
+        supportedTypes.some((type) =>
+          files[0].name.toLowerCase().endsWith(type),
+        )
+      ) {
         setFile(files[0]);
       } else {
         alert("Unsupported file type!");
       }
     }
-  }
+  };
 
   const handleFileDragOver = (event: React.DragEvent<HTMLLabelElement>) => {
     event.preventDefault();
     event.stopPropagation();
     setFileHovering(true);
-  }
+  };
 
   const handleFileDragLeave = (event: React.DragEvent<HTMLLabelElement>) => {
     event.preventDefault();
     event.stopPropagation();
     setFileHovering(false);
-  }
+  };
 
   const handleDrop = (event: React.DragEvent<HTMLLabelElement>) => {
     event.preventDefault();
     event.stopPropagation();
     const files = event.dataTransfer.files;
-    const supportedTypes = ['.svg', '.png', '.jpg', '.jpeg', '.webp'];
+    const supportedTypes = [".svg", ".png", ".jpg", ".jpeg", ".webp"];
     if (files && files.length > 0) {
       if (files[0].size > 10 * 1024 * 1024) {
         alert("File too large, must be less than 10 MB!");
         return;
       }
-      if (supportedTypes.some(type => files[0].name.toLowerCase().endsWith(type))) {
+      if (
+        supportedTypes.some((type) =>
+          files[0].name.toLowerCase().endsWith(type),
+        )
+      ) {
         setFile(files[0]);
       } else {
         alert("Unsupported file type!");
       }
     }
-  }
+  };
 
   const parseFileSize = (size: number) => {
     if (size < 1024) {
-      return size + ' bytes';
+      return size + " bytes";
     } else if (size < 1024 * 1024) {
-      return (size / 1024).toFixed(2) + ' KB';
+      return (size / 1024).toFixed(2) + " KB";
     } else if (size < 1024 * 1024 * 1024) {
-      return (size / 1024 / 1024).toFixed(2) + ' MB';
+      return (size / 1024 / 1024).toFixed(2) + " MB";
     } else {
-      return (size / 1024 / 1024 / 1024).toFixed(2) + ' GB';
+      return (size / 1024 / 1024 / 1024).toFixed(2) + " GB";
     }
-  }
+  };
 
   const compressImage = async () => {
     if (file) {
@@ -87,11 +102,15 @@ export default function Home() {
             headers: {
               "Content-Type": "application/json",
             },
-            body: JSON.stringify({ image: imageString, quality, outputFileType }),
+            body: JSON.stringify({
+              image: imageString,
+              quality,
+              outputFileType,
+            }),
           });
           if (response.ok) {
             const data = await response.json();
-            
+
             let mimeType = "image/jpeg";
             let extension = ".jpeg";
 
@@ -112,20 +131,22 @@ export default function Home() {
             }
 
             const compressedImage = Buffer.from(data.compressedImage, "base64");
-            const blob = new Blob([compressedImage], { type: mimeType});
+            const blob = new Blob([compressedImage], { type: mimeType });
             const newFileName = file.name.replace(/\.[^/.]+$/, extension);
-            const compressedFile = new File([blob], newFileName, { type: mimeType });
+            const compressedFile = new File([blob], newFileName, {
+              type: mimeType,
+            });
             setCompressedFile(compressedFile);
           } else {
             alert("Failed to compress image!");
           }
-        } catch (error) {
+        } catch {
           alert("Failed to compress image!");
         }
       };
       reader.readAsDataURL(file);
     }
-  }
+  };
 
   const outputFileTypeToString = (outputFileType: OutputFileType) => {
     switch (outputFileType) {
@@ -136,36 +157,36 @@ export default function Home() {
       case OutputFileType.WEBP:
         return ".webp";
     }
-  }
+  };
 
-  const handleQualitySliderChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleQualitySliderChange = (
+    event: React.ChangeEvent<HTMLInputElement>,
+  ) => {
     setQuality(parseInt(event.target.value));
-  }
+  };
 
   const downloadCompressedFile = () => {
     if (compressedFile) {
       const url = URL.createObjectURL(compressedFile);
-      const link = document.createElement('a');
+      const link = document.createElement("a");
       link.href = url;
-      link.setAttribute('download', compressedFile.name);
+      link.setAttribute("download", compressedFile.name);
       document.body.appendChild(link);
       link.click();
     }
-  }
+  };
 
   const reset = () => {
     setFile(null);
     setCompressedFile(null);
     setOutputFileType(OutputFileType.JPEG);
     setQuality(80);
-  }
+  };
 
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
       <div className="flex flex-col items-center">
-        <h1 className="text-center text-4xl font-bold">
-          Shrinky
-        </h1>
+        <h1 className="text-center text-4xl font-bold">Shrinky</h1>
         <h2 className="text-center text-xl mt-2 mb-5">
           Compress and convert your images with ease
         </h2>
@@ -173,8 +194,10 @@ export default function Home() {
           <div className="flex w-full items-center justify-center">
             <Label
               htmlFor="dropzone-file"
-              className= {!fileHovering ? "flex h-64 w-full cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed border-gray-300 bg-gray-50 hover:bg-gray-100 dark:border-gray-600 dark:bg-gray-700 dark:hover:border-gray-500 dark:hover:bg-gray-600" 
-                : "flex h-64 w-full cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed border-gray-300 bg-gray-100 dark:border-gray-600 dark:bg-gray-600"
+              className={
+                !fileHovering
+                  ? "flex h-64 w-full cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed border-gray-300 bg-gray-50 hover:bg-gray-100 dark:border-gray-600 dark:bg-gray-700 dark:hover:border-gray-500 dark:hover:bg-gray-600"
+                  : "flex h-64 w-full cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed border-gray-300 bg-gray-100 dark:border-gray-600 dark:bg-gray-600"
               }
               onDragOver={handleFileDragOver}
               onDragLeave={handleFileDragLeave}
@@ -197,51 +220,104 @@ export default function Home() {
                   />
                 </svg>
                 <p className="mb-2 text-sm text-gray-500 dark:text-gray-400">
-                  <span className="font-semibold">Click to upload</span> or drag and drop
+                  <span className="font-semibold">Click to upload</span> or drag
+                  and drop
                 </p>
-                <p className="text-xs text-gray-500 dark:text-gray-400">SVG, PNG, JPEG or WEBP. 10MB file size limit</p>
+                <p className="text-xs text-gray-500 dark:text-gray-400">
+                  SVG, PNG, JPEG or WEBP. 10MB file size limit
+                </p>
               </div>
-              <FileInput id="dropzone-file" className="hidden" accept=".svg,.png,.jpg,.jpeg,.webp" onChange={handleFileChange} />
+              <FileInput
+                id="dropzone-file"
+                className="hidden"
+                accept=".svg,.png,.jpg,.jpeg,.webp"
+                onChange={handleFileChange}
+              />
             </Label>
           </div>
         )}
         {file && (
-            <div className="flex flex-row gap-4 w-full">
+          <div className="flex flex-row gap-4 w-full">
+            <div className="flex flex-col items-center w-full">
+              <Image
+                src={URL.createObjectURL(file)}
+                alt="Uploaded image"
+                className="w-full rounded-lg"
+              />
+              <div className="flex flex-col items-center justify-center mt-5">
+                <p className="text-sm text-gray-500 dark:text-gray-400">
+                  File name: {file.name}
+                </p>
+                <p className="text-sm text-gray-500 dark:text-gray-400">
+                  File size: {parseFileSize(file.size)}
+                </p>
+              </div>
+            </div>
+            {compressedFile && (
               <div className="flex flex-col items-center w-full">
-                <h1 className="text-center text-2xl font-bold mb-10">Original</h1>
-                <img src={URL.createObjectURL(file)} alt="Uploaded image" className="w-full rounded-lg" />
+                <h1 className="text-center text-2xl font-bold mb-10">
+                  Compressed
+                </h1>
+                <Image
+                  src={URL.createObjectURL(file)}
+                  alt="Compressed image"
+                  className="w-full rounded-lg"
+                />
                 <div className="flex flex-col items-center justify-center mt-5">
-                <p className="text-sm text-gray-500 dark:text-gray-400">File name: {file.name}</p>
-                <p className="text-sm text-gray-500 dark:text-gray-400">File size: {parseFileSize(file.size)}</p>
+                  <p className="text-sm text-gray-500 dark:text-gray-400">
+                    File name: {compressedFile.name}
+                  </p>
+                  <p className="text-sm text-gray-500 dark:text-gray-400">
+                    File size: {parseFileSize(compressedFile.size)}
+                  </p>
                 </div>
               </div>
-              {compressedFile && (
-                <div className="flex flex-col items-center w-full">
-                  <h1 className="text-center text-2xl font-bold mb-10">Compressed</h1>
-                  <img src={URL.createObjectURL(file)} alt="Compressed image" className="w-full rounded-lg" />
-                  <div className="flex flex-col items-center justify-center mt-5">
-                  <p className="text-sm text-gray-500 dark:text-gray-400">File name: {compressedFile.name}</p>
-                  <p className="text-sm text-gray-500 dark:text-gray-400">File size: {parseFileSize(compressedFile.size)}</p>
-                  </div>
-                </div>
-              )}
-            </div>
+            )}
+          </div>
         )}
       </div>
       <div className="mt-7" />
       {!compressedFile && (
         <div>
-          <label htmlFor="outputFileTypeDropdown" className="text-md font-bold">Output file type (An output file type different to the input file can increase file sizes):</label>
-          <Dropdown id="outputFileTypeDropdown" label={outputFileTypeToString(outputFileType)}>
-            <Dropdown.Item onClick={() => setOutputFileType(OutputFileType.JPEG)}>.jpeg (Recommended)</Dropdown.Item>
-            <Dropdown.Item onClick={() => setOutputFileType(OutputFileType.PNG)}>.png</Dropdown.Item>
-            <Dropdown.Item onClick={() => setOutputFileType(OutputFileType.WEBP)}>.webp</Dropdown.Item>
+          <label htmlFor="outputFileTypeDropdown" className="text-md font-bold">
+            Output file type (An output file type different to the input file
+            can increase file sizes):
+          </label>
+          <Dropdown
+            id="outputFileTypeDropdown"
+            label={outputFileTypeToString(outputFileType)}
+          >
+            <Dropdown.Item
+              onClick={() => setOutputFileType(OutputFileType.JPEG)}
+            >
+              .jpeg (Recommended)
+            </Dropdown.Item>
+            <Dropdown.Item
+              onClick={() => setOutputFileType(OutputFileType.PNG)}
+            >
+              .png
+            </Dropdown.Item>
+            <Dropdown.Item
+              onClick={() => setOutputFileType(OutputFileType.WEBP)}
+            >
+              .webp
+            </Dropdown.Item>
           </Dropdown>
           {outputFileType !== OutputFileType.PNG && (
             <div className="mt-4">
-              <label htmlFor="qualitySlider" className="text-md font-bold">Quality:</label>
+              <label htmlFor="qualitySlider" className="text-md font-bold">
+                Quality:
+              </label>
               <div className="flex flex-row items-center w-full">
-                <RangeSlider id="qualitySlider" onChange={handleQualitySliderChange} min={1} max={100} step={1} defaultValue={quality} className="w-full" />
+                <RangeSlider
+                  id="qualitySlider"
+                  onChange={handleQualitySliderChange}
+                  min={1}
+                  max={100}
+                  step={1}
+                  defaultValue={quality}
+                  className="w-full"
+                />
                 <p className="ml-2">{quality}%</p>
               </div>
             </div>
@@ -249,13 +325,19 @@ export default function Home() {
         </div>
       )}
       {file && !compressedFile && (
-        <Button color="blue" onClick={compressImage} className="mt-4">Compress!</Button>
+        <Button color="blue" onClick={compressImage} className="mt-4">
+          Compress!
+        </Button>
       )}
       {compressedFile && (
         <div className="flex flex-row items-center mt-4">
-          <Button color="success" onClick={downloadCompressedFile}>Download</Button>
+          <Button color="success" onClick={downloadCompressedFile}>
+            Download
+          </Button>
           <div className="w-4" />
-          <Button color="blue" onClick={reset}>Upload another image</Button>
+          <Button color="blue" onClick={reset}>
+            Upload another image
+          </Button>
         </div>
       )}
     </div>
