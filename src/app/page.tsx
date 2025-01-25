@@ -25,8 +25,8 @@ export default function Home() {
     const files = event.target.files;
     const supportedTypes = [".svg", ".png", ".jpg", ".jpeg", ".webp"];
     if (files && files.length > 0) {
-      if (files[0].size > 10 * 1024 * 1024) {
-        alert("File too large, must be less than 10 MB!");
+      if (files[0].size > 4 * 1024 * 1024) {
+        alert("File too large, must be less than 4 MB!");
         return;
       }
       if (
@@ -59,8 +59,8 @@ export default function Home() {
     const files = event.dataTransfer.files;
     const supportedTypes = [".svg", ".png", ".jpg", ".jpeg", ".webp"];
     if (files && files.length > 0) {
-      if (files[0].size > 10 * 1024 * 1024) {
-        alert("File too large, must be less than 10 MB!");
+      if (files[0].size > 4 * 1024 * 1024) {
+        alert("File too large, must be less than 4 MB!");
         return;
       }
       if (
@@ -224,7 +224,7 @@ export default function Home() {
                   and drop
                 </p>
                 <p className="text-xs text-gray-500 dark:text-gray-400">
-                  SVG, PNG, JPEG or WEBP. 10MB file size limit
+                  SVG, PNG, JPEG or WEBP. 4MB file size limit
                 </p>
               </div>
               <FileInput
