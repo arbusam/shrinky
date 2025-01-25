@@ -239,10 +239,13 @@ export default function Home() {
         {file && (
           <div className="flex flex-row gap-4 w-full">
             <div className="flex flex-col items-center w-full">
+              <h1 className="text-center text-2xl font-bold mb-5">Original</h1>
               <Image
                 src={URL.createObjectURL(file)}
                 alt="Uploaded image"
                 className="w-full rounded-lg"
+                height={100}
+                width={100}
               />
               <div className="flex flex-col items-center justify-center mt-5">
                 <p className="text-sm text-gray-500 dark:text-gray-400">
@@ -255,13 +258,15 @@ export default function Home() {
             </div>
             {compressedFile && (
               <div className="flex flex-col items-center w-full">
-                <h1 className="text-center text-2xl font-bold mb-10">
+                <h1 className="text-center text-2xl font-bold mb-5">
                   Compressed
                 </h1>
                 <Image
                   src={URL.createObjectURL(file)}
                   alt="Compressed image"
                   className="w-full rounded-lg"
+                  height={100}
+                  width={100}
                 />
                 <div className="flex flex-col items-center justify-center mt-5">
                   <p className="text-sm text-gray-500 dark:text-gray-400">
