@@ -262,7 +262,7 @@ export default function Home() {
                   Compressed
                 </h1>
                 <Image
-                  src={URL.createObjectURL(file)}
+                  src={URL.createObjectURL(compressedFile)}
                   alt="Compressed image"
                   className="w-full rounded-lg"
                   height={100}
